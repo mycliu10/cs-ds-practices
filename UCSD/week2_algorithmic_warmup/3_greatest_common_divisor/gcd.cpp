@@ -1,15 +1,20 @@
 #include <iostream>
 
 int gcd_naive(int a, int b) {
-  int current_gcd = 1;
-  for (int d = 2; d <= a && d <= b; d++) {
-    if (a % d == 0 && b % d == 0) {
-      if (d > current_gcd) {
-        current_gcd = d;
+  for(; a>0 and b>0; ) {
+      if(a>b) {
+          a = a%b;
       }
-    }
+      else {
+          b = b%a;
+      }
   }
-  return current_gcd;
+  if(a>0) {
+      return a;
+  }
+  else {
+      return b;
+  }
 }
 
 int main() {

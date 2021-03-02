@@ -1,11 +1,25 @@
 #include <iostream>
-
+int gcd_naive(int a, int b) {
+    for(; a>0 and b>0; ) {
+        if(a>b) {
+            a = a%b;
+        }
+        else {
+            b = b%a;
+        }
+    }
+    if(a>0) {
+        return a;
+    }
+    else {
+        return b;
+    }
+}
 long long lcm_naive(int a, int b) {
-  for (long l = 1; l <= (long long) a * b; ++l)
-    if (l % a == 0 && l % b == 0)
-      return l;
 
-  return (long long) a * b;
+
+  int gcd = gcd_naive(a, b);
+  return (long long) a * b / gcd;
 }
 
 int main() {
