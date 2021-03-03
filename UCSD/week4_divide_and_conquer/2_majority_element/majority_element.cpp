@@ -5,9 +5,33 @@
 using std::vector;
 
 int get_majority_element(vector<int> &a, int left, int right) {
-  if (left == right) return -1;
-  if (left + 1 == right) return a[left];
   //write your code here
+  int maj = a[0];
+  int count = 0;
+  for(int i=0; i<a.size(); ++i) {
+      if(count==0) {
+          maj = a[i];
+          ++count;
+      }
+      else if(maj==a[i]) {
+          ++count;
+      }
+      else {
+          --count;
+      }
+  }
+
+  count = 0;
+  for(int i=0; i<a.size(); ++i) {
+      if(maj==a[i]) {
+          ++count;
+      }
+  }
+  if(count>a.size()/2) {
+      return 0;
+  }
+
+
   return -1;
 }
 
