@@ -22,6 +22,14 @@ long long eval(long long a, long long b, char op) {
 
 long long get_maximum_value(const string &exp) {
   //write your code here
+  int maxsize = exp.size() + 1;
+  vector<long long> mins(maxsize*maxsize, 0);
+  vector<long long> maxs(maxsize*maxsize, 0);
+
+
+
+
+
   return 0;
 }
 
