@@ -19,6 +19,11 @@ class HeapBuilder {
     for (int i = 0; i < swaps_.size(); ++i) {
       cout << swaps_[i].first << " " << swaps_[i].second << "\n";
     }
+//cout << std::endl;
+//for(int i = 0; i < data_.size(); ++i) {
+//    cout << data_[i] << " ";
+//}
+//cout << std::endl;
   }
 
   void ReadData() {
@@ -38,13 +43,42 @@ class HeapBuilder {
     // but in the worst case gives a quadratic number of swaps.
     //
     // TODO: replace by a more efficient implementation
-    for (int i = 0; i < data_.size(); ++i)
-      for (int j = i + 1; j < data_.size(); ++j) {
-        if (data_[i] > data_[j]) {
-          swap(data_[i], data_[j]);
-          swaps_.push_back(make_pair(i, j));
+
+    // binary min-heap
+    for( ; ; ) {
+        int count = 0;
+        int n = data_.size();
+        for(int i = n-1; i >= 1; --i) {
+            int index_self = i;
+            for( ; ; ) {
+                int index_parent = (index_self+1)/2 - 1;
+                if(data_[index_self] < data_[index_parent]) {
+                    swap(data_[index_self], data_[index_parent]);
+                    swaps_.push_back(make_pair(index_parent, index_self));
+                    index_self = index_parent;
+                    ++count;
+                    if(index_self == 0) {
+                        break;
+                    }
+                }
+                else {
+                    break;
+                }
+            }
         }
-      }
+        if(count==0) {
+            break;
+        }
+    }
+// selection sort
+//    for (int i = 0; i < data_.size(); ++i)
+//      for (int j = i + 1; j < data_.size(); ++j) {
+//        if (data_[i] > data_[j]) {
+//          swap(data_[i], data_[j]);
+//          swaps_.push_back(make_pair(i, j));
+//        }
+//      }
+//    }
   }
 
  public:
