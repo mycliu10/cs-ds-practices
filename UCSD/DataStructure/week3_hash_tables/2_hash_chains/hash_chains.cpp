@@ -15,18 +15,20 @@ struct Query {
 class QueryProcessor {
     int bucket_count;
     // store all strings in one vector
-    vector<string> elems;
+    vector< vector<string> > elems_;
     size_t hash_func(const string& s) const {
         static const size_t multiplier = 263;
         static const size_t prime = 1000000007;
         unsigned long long hash = 0;
         for (int i = static_cast<int> (s.size()) - 1; i >= 0; --i)
-            hash = (hash * multiplier + s[i]) % prime;
+            hash = ((hash * multiplier + s[i]) % prime + prime) % prime;
         return hash % bucket_count;
     }
 
 public:
-    explicit QueryProcessor(int bucket_count): bucket_count(bucket_count) {}
+    explicit QueryProcessor(int bucket_count): bucket_count(bucket_count) {
+        elems_.resize(bucket_count);
+    }
 
     Query readQuery() const {
         Query query;
@@ -45,20 +47,20 @@ public:
     void processQuery(const Query& query) {
         if (query.type == "check") {
             // use reverse order, because we append strings to the end
-            for (int i = static_cast<int>(elems.size()) - 1; i >= 0; --i)
-                if (hash_func(elems[i]) == query.ind)
-                    std::cout << elems[i] << " ";
+            for (int i = static_cast<int>(elems_[query.ind].size()) - 1; i >= 0; --i)
+                std::cout << elems_[query.ind][i] << " ";
             std::cout << "\n";
         } else {
-            vector<string>::iterator it = std::find(elems.begin(), elems.end(), query.s);
+            size_t ind = hash_func(query.s);
+            vector<string>::iterator it = std::find(elems_[ind].begin(), elems_[ind].end(), query.s);
             if (query.type == "find")
-                writeSearchResult(it != elems.end());
+                writeSearchResult(it != elems_[ind].end());
             else if (query.type == "add") {
-                if (it == elems.end())
-                    elems.push_back(query.s);
+                if (it == elems_[ind].end())
+                    elems_[ind].push_back(query.s);
             } else if (query.type == "del") {
-                if (it != elems.end())
-                    elems.erase(it);
+                if (it != elems_[ind].end())
+                    elems_[ind].erase(it);
             }
         }
     }
