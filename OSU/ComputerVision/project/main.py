@@ -18,7 +18,7 @@ def main():
 
 
     # image
-    for filename in ["".join( ("./data/mask",n.__str__(),".jpg") ) for n in range(17)]:
+    for filename in ["".join( ("./data/mask",n.__str__(),".jpg") ) for n in range(27)]:
         processData(filename, eye_edges)
 
     return 
@@ -28,26 +28,21 @@ def main():
 #    plt.imshow(edges, cmap="gray")
 #    plt.show()
 
-#    return
-
-
-    return
-
-    sift = cv2.SIFT_create()
-    kp, des = sift.detectAndCompute(edges, None)
-
-
-    eye_sift = [sift.detectAndCompute(img, None) for img in eye_edges]
-
-    i = cv2.drawKeypoints(image_gray, kp, image)
-#    plt.imshow(i)
-#    plt.show()
-
-    bf = cv2.BFMatcher(cv2.NORM_L1, crossCheck=True)
-    eye_matches = bf.match(des, eye_sift[0][1])
-    eye_matches = sorted(eye_matches, key = lambda x:x.distance)
-
-    img = cv2.drawMatches(edges, kp, eye_edges[0], eye_sift[0][0], eye_matches[:10], None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+#    sift = cv2.SIFT_create()
+#    kp, des = sift.detectAndCompute(edges, None)
+#
+#
+#    eye_sift = [sift.detectAndCompute(img, None) for img in eye_edges]
+#
+#    i = cv2.drawKeypoints(image_gray, kp, image)
+##    plt.imshow(i)
+##    plt.show()
+#
+#    bf = cv2.BFMatcher(cv2.NORM_L1, crossCheck=True)
+#    eye_matches = bf.match(des, eye_sift[0][1])
+#    eye_matches = sorted(eye_matches, key = lambda x:x.distance)
+#
+#    img = cv2.drawMatches(edges, kp, eye_edges[0], eye_sift[0][0], eye_matches[:10], None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
 
 #    plt.imshow(img)
 #    plt.show()
@@ -144,7 +139,7 @@ def processData(filename, eye_patterns):
     distance = 100.
     count = 0
     j = nst1 + tm_eye_result[2]
-    for i in range(nst0+tm_eye_result[1]+tm_eye_result[4]//2, image_hsv.shape[0]):
+    for i in range(nst0+tm_eye_result[1]+tm_eye_result[4], image_hsv.shape[0]):
         if image_hsv[i,j]==0:
             count += 1
             if count==10:
