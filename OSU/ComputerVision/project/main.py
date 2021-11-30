@@ -12,40 +12,12 @@ def main():
     eye_grays = [e[0] for e in eye_patterns]
     eye_edges = [e[1] for e in eye_patterns]
 
-#    segs = skimage.segmentation.slic(image, n_segments=10, compactness=0.1, start_label=1)
-#    plt.imshow(skimage.color.label2rgb(segs, image))
-#    plt.show()
-
-
     # image
     for filename in ["".join( ("./data/mask",n.__str__(),".jpg") ) for n in range(27)]:
         processData(filename, eye_edges)
 
     return 
 
-
-#    edges = skimage.feature.canny(image_gray, sigma=sigma)
-#    plt.imshow(edges, cmap="gray")
-#    plt.show()
-
-#    sift = cv2.SIFT_create()
-#    kp, des = sift.detectAndCompute(edges, None)
-#
-#
-#    eye_sift = [sift.detectAndCompute(img, None) for img in eye_edges]
-#
-#    i = cv2.drawKeypoints(image_gray, kp, image)
-##    plt.imshow(i)
-##    plt.show()
-#
-#    bf = cv2.BFMatcher(cv2.NORM_L1, crossCheck=True)
-#    eye_matches = bf.match(des, eye_sift[0][1])
-#    eye_matches = sorted(eye_matches, key = lambda x:x.distance)
-#
-#    img = cv2.drawMatches(edges, kp, eye_edges[0], eye_sift[0][0], eye_matches[:10], None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
-
-#    plt.imshow(img)
-#    plt.show()
 
 def preprocess(filename):
     # filename preprocess #
@@ -130,7 +102,7 @@ def processData(filename, eye_patterns):
     tm_eye_result = multiTemplateMatch(eye_patterns, face_edges)
     plt.figure()
     plt.imshow(face_edges, cmap="gray")
-    plt.plot(tm_eye_result[2], tm_eye_result[1], "ro")
+    plt.plot(tm_eye_result[2], tm_eye_result[1], "ro", markersize=12)
     plt.savefig("".join( (prefix, "_eye.jpg") ))
     plt.close()
 
@@ -152,8 +124,8 @@ def processData(filename, eye_patterns):
     print(filename, ": mask-eye distance = ", distance, " of eye widths.", "Safty: ", result)
     plt.figure()
     plt.imshow(image_hsv, cmap="gray")
-    plt.plot(j, nst0+tm_eye_result[1], "ro")
-    plt.plot(j, i-10, "yo")
+    plt.plot(j, nst0+tm_eye_result[1], "ro", markersize=12)
+    plt.plot(j, i-10, "yo", markersize=12)
     plt.savefig(prefix + "_mask.jpg")
     plt.close()
 
@@ -162,8 +134,8 @@ def processData(filename, eye_patterns):
     # output result #
     plt.figure()
     plt.imshow(image_gray, cmap="gray")
-    plt.plot(j, nst0+tm_eye_result[1], "ro")
-    plt.plot(j, i-10, "yo")
+    plt.plot(j, nst0+tm_eye_result[1], "ro", markersize=12)
+    plt.plot(j, i-10, "yo", markersize=12)
     plt.savefig(prefix)
     plt.close()
 
@@ -275,8 +247,4 @@ def templateMatch(t, image):
 
 
 if __name__=="__main__":
-#    image = cv2.imread("pattern/eye0.jpg")
-#    image = mirroImage(image)
-#    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-#    plt.imsave("pattern/eye1.jpg", image)
     main()
