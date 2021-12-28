@@ -34,17 +34,25 @@ def Preview(df, cols_target=[], output_figs=False, output_prefix='preview'):
     print( df.describe(include='all') )
 
     if output_figs:
-        fig, ax = plt.subplots()
+        n = df.shape[-1]
+        fig, ax = plt.subplots(figsize=(n,n))
         corr = df.apply(lambda x: pd.factorize(x)[0]).corr()
         sns.heatmap(corr, vmax=0.8, cbar=True, annot=True, fmt='.2f' )
         fig.savefig(output_prefix+ "_heatmap.png")
     
         for c in df.columns:
             for t in cols_target:
-                fig, ax = plt.subplots()
-                sns.histplot( data=df, x=c, hue=t, stat='count', multiple='layer' )
-                filename = "".join( (output_prefix, '_hist_', c.lower(), '_', t.lower(), '.png') )
-                fig.savefig(filename)
+                if df[t].dtype.name == 'category':
+                    fig, ax = plt.subplots()
+                    sns.histplot( data=df, x=c, hue=t, stat='count', multiple='layer' )
+                    filename = "".join( (output_prefix, '_hist_', c.lower(), '_', t.lower(), '.png') )
+                    fig.savefig(filename)
+                else:
+                    fig, ax = plt.subplots()
+                    sns.scatterplot( data=df, x=c, y=t )
+                    filename = "".join( (output_prefix, '_scatter_', c.lower(), '_', t.lower(), '.png') )
+                    fig.savefig(filename)
+
 
 
 
