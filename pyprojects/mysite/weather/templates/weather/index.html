@@ -1,0 +1,32 @@
+{% extends 'weather/base.html' %}
+
+{% block content %}
+<table border="1">
+    <caption>Weather Reports Pulled From Multiple Sources</caption>
+    <tr>
+        <th rowspan={{ num_sources }}>time</th>
+        <th colspan={{ num_sources }}>feels-like temperature</th>
+        <th colspan={{ num_sources }}>chance of precipitation</th>
+        <th colspan={{ num_sources }}>description</th>
+    </tr>
+    <tr>
+        <th>OpenWeatherMap</th>
+        <th>Weatherbit</th>
+        <th>OpenWeatherMap</th>
+        <th>Weatherbit</th>
+        <th>OpenWeatherMap</th>
+        <th>Weatherbit</th>
+    </tr>
+    {% for h in pulled_hourly %}
+    <tr>
+        <th>{{ h.time }}</th>
+        <th>{{ h.feels_like_OpenWeatherMap}}</th>
+        <th>{{ h.feels_like_Weatherbit}}</th>
+        <th>{{ h.pop_OpenWeatherMap}}</th>
+        <th>{{ h.pop_Weatherbit}}</th>
+        <th>{{ h.description_OpenWeatherMap|lower}}</th>
+        <th>{{ h.description_Weatherbit|lower}}</th>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
