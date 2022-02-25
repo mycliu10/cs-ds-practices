@@ -16,7 +16,7 @@ class KoB:
 
 
 
-    def checkValid(self, game, valid_games, count_games, strict=0):
+    def checkValid(self, game, valid_games, count_games=None, strict=0):
         game_set = set(game)
         is_valid = True
         if len(game_set) != 4:
@@ -38,21 +38,25 @@ class KoB:
                     or len(opponent[1].union(opponent[2])) <= 2 \
                     or len(opponent[1].union(opponent[3])) <= 2 :
                     is_valid = False
-                
-        for n in game:
-            if count_games[n] >= self._num_games_per_pair:
-                is_valid = False
+
+        if count_games is not None:                
+            for n in game:
+                if count_games[n] >= self._num_games_per_pair:
+                    is_valid = False
 
         return is_valid
 
 
 
     def addGame(self, game, valid_games, count_games):
-        for n in game:
-            count_games[n] += 1
-        valid_games.append( game )
+        idxmin = np.argmin( count_games )
+        if idxmin in game:
+            for n in game:
+                count_games[n] += 1
+            valid_games.append( game )
+            return True
 
-        return
+        return False
 
 
     def formGamesWithPolicy(self, num_segs, num_choices_per_seg, order=0):
@@ -73,38 +77,56 @@ class KoB:
 
                 elif order == 1:
                     game = [ self._num_pairs-1-i for i in game ]
-
-                games.append( game )
+                
+                gamelist = [ 
+                            [game[0], game[1], game[2], game[3]],
+                            [game[0], game[1], game[3], game[2]],
+                            [game[2], game[1], game[0], game[3]],
+                            ]
+                games += gamelist
 
         return games
 
 
 
+    def makeGamesByRound(self):
+        self._games = []
+        
+
     def makeGames(self):
         self._games = []
-        count_games = np.zeros( self._num_pairs )
+        count_games = np.zeros( self._num_pairs, dtype=int )
         
         args_list = [ 
-                      [9, 4, 0, 0],
-                      [12, 2, 0, 0],
-                      [12, 1, 0, 0],
+#                      [9, 4, 0, 0],
+#                      [9, 2, 0, 0],
+#                      [4, 1, 0, 0],
+                      [4, 1, 0, 0],
+                      [4, 1, 1, 1],
+#                      [4, 1, 2, 1],
+#                      [4, 4, 0, 1],
+#                      [4, 2, 0, 1],
+#                      [4, 2, 1, 1],
+#                      [4, 2, 2, 1],
+#                      [9, 1, 1, 1],
+#                      [9, 1, 2, 1],
+#                      [9, 1, 0, 1],
+#                      [1, 4, 1, 1],
 #                      [1, 4, 0, 0],
 #                      [1, 4, 1, 1],
-                      [9, 2, 1, 1],
-                      [9, 1, 1, 1],
-                      [6, 2, 2, 1],
-                      [6, 1, 2, 1],
-                      [3, 2, 0, 1],
-                      [3, 1, 2, 1],
 #                      [1, 4, 1, 1],
                     ]
 
         for args in args_list:
-            games = self.formGamesWithPolicy(args[0], args[1], order=args[2])
-            for game in games:
-                is_valid = self.checkValid(game, self._games, count_games, strict=args[3])
-                if is_valid:
-                    self.addGame(game, self._games, count_games)
+            is_any_added = True
+            while is_any_added:
+                is_added = False
+                games = self.formGamesWithPolicy(args[0], args[1], order=args[2])
+                for game in games:
+                    is_valid = self.checkValid(game, self._games, count_games=count_games, strict=args[3])
+                    if is_valid:
+                        is_added = is_added or self.addGame(game, self._games, count_games)
+                is_any_added = is_added
         return self._games
             
 
@@ -127,8 +149,12 @@ class KoB:
                     elif n in g[1:3]:
                         teammates += [i for i in g[1:3] if i != n] 
                         opponents += g[0:4:3] 
+            opponents.sort()
+            teammates.sort()
             mates = opponents + teammates
             print( f"pair {n:2} plays {len(games):2} games with/against m/m/m {min(mates):4} {np.median(mates):6} {max(mates):4}, encounters {len(set(mates))} pairs" )
+            if len(set(teammates)) < self._num_games_per_pair:
+                print( f"teammates are {teammates} and opponents are {opponents}" )
 
 
     def countByes(self, n, games):
@@ -212,14 +238,14 @@ class KoB:
 
 
 def main():
-    kob = KoB(36, 5, 8)
+    kob = KoB(28, 5, 9)
     kob.makeGames()
     kob.checkGames()
 
     count = 0
     maxbyes = 999
     num_rounds = 999
-    while maxbyes > 2 or num_rounds > 14:
+    while maxbyes > 2 or num_rounds > 12:
         maxbyes, num_rounds, games_scheduled  = kob.scheduleGames()
 
     with open("valid_game_schedule.json", "w") as f:
