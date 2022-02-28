@@ -28,10 +28,10 @@ class KoB:
                 if len(check_set) <= 6:
                     is_valid = False
             elif strict==1:
-                opponent = [ set([valid_game[0],valid_game[3]]), \
-                             set([valid_game[1],valid_game[2]]), \
-                             set([game[0],game[3]]),    \
-                             set([game[1],game[2]]),    \
+                opponent = [ set([valid_game[0],valid_game[1]]), \
+                             set([valid_game[2],valid_game[3]]), \
+                             set([game[0],game[1]]),    \
+                             set([game[2],game[3]]),    \
                            ]
                 if     len(opponent[0].union(opponent[2])) <= 2 \
                     or len(opponent[0].union(opponent[3])) <= 2 \
@@ -236,20 +236,80 @@ class KoB:
         return maxbyes, num_rounds, games_scheduled
 
 
+    def saveGameSchedule(self, maxbyes_allowed, maxrounds_allowed):
+        maxbyes = 999
+        num_rounds = 999
+        while maxbyes > maxbyes_allowed or num_rounds > maxrounds_allowed-1:
+            maxbyes, num_rounds, games_scheduled  = self.scheduleGames()
+    
+        with open("valid_game_schedule.json", "w") as f:
+            json.dump(games_scheduled, f, indent=4)
+
+        return games_scheduled
+
+
+    def loadGameSchedule(self, filename):
+        with open(filename, "r") as f:
+            games_scheduled = json.load(f)
+        
+        self._games = games_scheduled
+        return
+
+
+    def makeExcel(self):
+        from openpyxl import Workbook
+        wb = Workbook()
+        ws = wb.active
+
+        for i in range(self._num_pairs):
+            cellname = chr(66)  + (i+1+30).__str__()
+            ws[cellname] = i+1
+
+        game_excel_index_list = []
+        counts = np.zeros(self._num_pairs, dtype=int)        
+        for index_game,game in enumerate(self._games):
+            n = index_game // self._num_courts
+            r = index_game % self._num_courts
+            cellname = chr(65) + (2*n+2).__str__()
+            ws[cellname] = "round " + (n+1).__str__()
+            cellname = chr(65+1 + 5*r + 2) + (2*n+2).__str__()
+            ws[cellname] = "vs"
+
+            game_excel_index = []
+            for index_pair, pair in enumerate(game):
+                if index_pair <=1:
+                    cellname = chr(65+1 + 5*r + index_pair) + (2*n+2).__str__()
+                else:
+                    cellname = chr(65+2 + 5*r + index_pair) + (2*n+2).__str__()
+                ws[cellname] = pair + 1
+                game_excel_index.append( cellname )
+            
+                cellname = chr(65 + 2 + counts[pair])  + (pair+30+1).__str__()
+                if index_pair <=1:
+                    ws[cellname] = "=" + chr(65+1 + 5*r) + (2*n+3).__str__()
+                else:
+                    ws[cellname] = "=" + chr(65+4 + 5*r) + (2*n+3).__str__()
+                counts[pair] += 1
+
+            game_excel_index_list.append( game_excel_index )
+
+
+        
+
+
+        wb.save('schedule.xlsx')
+
 
 def main():
-    kob = KoB(28, 5, 9)
+    kob = KoB(24, 5, 9)
+
     kob.makeGames()
     kob.checkGames()
+    kob.saveGameSchedule(2, 12)
 
-    count = 0
-    maxbyes = 999
-    num_rounds = 999
-    while maxbyes > 2 or num_rounds > 12:
-        maxbyes, num_rounds, games_scheduled  = kob.scheduleGames()
+    kob.loadGameSchedule("valid_game_schedule.json")
+    kob.makeExcel()
 
-    with open("valid_game_schedule.json", "w") as f:
-        json.dump(games_scheduled, f, indent=4)
 
 if __name__=="__main__":
     main()
