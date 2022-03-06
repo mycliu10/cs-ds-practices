@@ -82,3 +82,26 @@ def Learn(X, Y, function_list=[]):
     return results, models
 
 
+
+def extractDict(d, keys):
+    ed = {}
+    for key in keys:
+        if type(key) is dict:
+            for k,v in key.items():
+                try:
+                    if type(v) is list:
+                        subd = d
+                        for i in v:
+                            subd = subd[i]
+                        ed[k] = subd
+                    else:
+                        ed[k] = d[v]
+                except:
+                    ed[k] = None
+        else:
+            try:
+                ed[key] = d[key]
+            except:
+                ed[key] = None
+
+    return ed
