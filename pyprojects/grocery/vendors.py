@@ -1,5 +1,9 @@
+import os
 import sys
-sys.path.append("../")
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
@@ -33,7 +37,7 @@ class Target:
             'sec-fetch-dest': 'empty',
             'referer': 'https://www.target.com/s?searchTerm=banana',
             'accept-language': 'en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7',
-            'cookie': 'TealeafAkaSid=Q6POWvahrOdJ1jtxxKgUqX2AWpFsOeLy; visitorId=017F5DCA70A7020185B2202B65A69D6C; sapphire=1; UserLocation=43016|40.060|-83.150|OH|US; egsSessionId=31f25626-ca08-41d9-ae79-6d2c64fdfa21; accessToken=eyJraWQiOiJlYXMyIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI2MDZmYTM3Ni1hODFkLTQ4MzUtYjVkYS1kMmRjOGM1ZmMxZmQiLCJpc3MiOiJNSTYiLCJleHAiOjE2NDY2MzI0MjQsImlhdCI6MTY0NjU0NjAyNCwianRpIjoiVEdULjFjNDFhMTJmYmZjZTQ3Y2NhNmQ0ZDA2NjBkMDdjNTVlLWwiLCJza3kiOiJlYXMyIiwic3V0IjoiRyIsImRpZCI6IjdjYWJjMTQyYWNmZGI5NTUyNmYzOGUyNmNmMjMzMzRhYjVmOWI1NTQ1OTZlMDk0NGQ2OTNlMzAxOTAyNmZiZGMiLCJzY28iOiJlY29tLm5vbmUsb3BlbmlkIiwiY2xpIjoiZWNvbS13ZWItMS4wLjAiLCJhc2wiOiJMIn0.rW7ou_mUeTBlQKl2hSvt8vyxgqOa7NgDbop1YuiWSfutaEsQs5zl5LEXDErIFZ7jd9s7pu-8S-JdwTaIhzS7CzOFo_qBP9HjpBamq648qTyrOoqrv-WEWUyF0-P6jUuAolY8nF7jT5COCUXJ30bR23lrYoHy-p-oDNPGaFD1jZGk5BBVyPUyKObpWmjFv-kqoxkSuwDug4wjcU7viYNOGjgusIEoyDQ9lTUF19sqF7tVnm35hgr95LhpDz8UhY6VRFadN_JZAE4u7u3yJv1V0GONEUNNhfAHaQCB8M4fSk6gXlc-9ifyPlE1ORh4q6OTJMvWxrWguLcB5_3UnT16Dw; idToken=eyJhbGciOiJub25lIn0.eyJzdWIiOiI2MDZmYTM3Ni1hODFkLTQ4MzUtYjVkYS1kMmRjOGM1ZmMxZmQiLCJpc3MiOiJNSTYiLCJleHAiOjE2NDY2MzI0MjQsImlhdCI6MTY0NjU0NjAyNCwiYXNzIjoiTCIsInN1dCI6IkciLCJjbGkiOiJlY29tLXdlYi0xLjAuMCIsInBybyI6eyJmbiI6bnVsbCwiZW0iOm51bGwsInBoIjpmYWxzZSwibGVkIjpudWxsLCJsdHkiOmZhbHNlfX0.; refreshToken=jmd7KEuusiSQvlFtuAi2gAWeKkguAIzCfeIv5AAc21uU8t4FisJy-8kUX1Qpwp8NO0qVbzydpOyXlxfUppfY1A; fiatsCookie=DSI_666|DSN_Columbus%20NW|DSZ_43017; ci_pixmgr=other; _gcl_au=1.1.1570380276.1646546026; cd_user_id=17f5dca837d970-0704e96f89b4f7-1d326253-1fa400-17f5dca837e7ef; ffsession={%22sessionHash%22:%22421daa10b1a321646546023853%22%2C%22prevPageName%22:%22search:%20search%20results%22%2C%22prevPageType%22:%22search:%20search%20results%22%2C%22prevPageUrl%22:%22https://www.target.com/s?searchTerm=banana%22%2C%22sessionHit%22:4%2C%22prevSearchTerm%22:%22banana%22}; _uetsid=c95a7eb09d1111ecac55e5b08dfaaf36; _uetvid=c95aad609d1111ec87bb092837a2609f; _mitata=YzNlMjY0YWE0Zjk3YzNkOWRkNmNiY2QwNjUyMDQyMWVhMTU2NTU2NmQ2NTc5YmVmMTNmNzY2YjcxYTFkN2NjNA==_/@#/1646546404_/@#/c9EyxkVxPz9Lk2Fp_/@#/MWU1YzY4NWI1NzI2YThiZmFlZjY5MzAwZDQ3ZGQ2ZTljNzllOGYzMTg4MmMzMGE3ZGEzYzRjYzVlNmUzYTFhZg==_/@#/000; _mitata=MmFlNTYwOGNiYjkwYjVjNjlmOTQ2YWZjN2IxYjhkM2I4M2ViYzNlNDRlZWEwM2Q2ZDk0MmViOTE2YWRjNGVhMg==_/@#/1646546679_/@#/c9EyxkVxPz9Lk2Fp_/@#/M2VhZjQwNzZiYjVhYTNlZjM4N2EzMjM5MzM2NTQ5ZjM3NGRmMzU4MWMxODE2Yjg1N2YxOGU4YzNiNWNiOTljZQ==_/@#/000'
+            'cookie': '47'
         }
         
         try:
@@ -60,7 +64,7 @@ class Walmart:
         return
 
     def search(self, name):
-        with open("walmart_query.txt", "r") as f:
+        with open(os.path.join(currentdir,"walmart_query.txt"), "r") as f:
             query = f.read()
 
         url = "https://www.walmart.com/orchestra/home/graphql/search?query=pasta%20sauce&page=1&prg=desktop&sort=best_match&ps=40&fetchMarquee=true&fetchSkyline=true&fetchSbaTop=true"
@@ -166,6 +170,14 @@ class Vendors:
 
     def __init__(self):
         return
+
+
+    def getPrice(self, name):
+        result = {}
+        for v in self._vendors:
+            result[v._name] = v.search(name)
+
+        return result
 
 
     def checkPrice(self, name):
