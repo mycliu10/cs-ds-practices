@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'grocery.apps.GroceryConfig',
+    'grocery_api.apps.GroceryConfig',
     'rest_framework',
     'frontend',
     'weather',
