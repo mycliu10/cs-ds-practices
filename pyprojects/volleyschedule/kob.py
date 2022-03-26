@@ -433,10 +433,12 @@ class KoB:
 def main():
     kob = KoB(num_pairs=32, num_courts=5, num_games_per_pair=8, maxbyes_allowed=2, maxrounds_allowed=13)
 
+    # match making
 #    kob.makeGames()
 #    kob.checkGames()
 #    kob.saveGameSchedule()
 
+    # schedule making
     kob.loadGameSchedule("valid_game_schedule.32.json")
     kob.makeExcel()
 
