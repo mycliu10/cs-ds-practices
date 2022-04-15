@@ -62,34 +62,62 @@ class KoB:
 
 
 
-    def formGamesWithPolicy(self, num_segs, num_choices_per_seg, order=0):
+    def formGamesWithPolicy(self, num_segs=4, num_choices_per_seg=1, order=0):
         num_segs_to_choose_from = 4 // num_choices_per_seg
         seg_size = self._num_pairs // num_segs
-        games = []
+
+        pairs_in_segments = []
+        if seg_size*num_segs < self._num_pairs:
+            seg_size += 1
+        for n in range(num_segs-1):
+            seg = [i for i in range(seg_size*n, seg_size*(n+1)) ]
+            pairs_in_segments.append( seg )
+        pairs_in_segments.append( [i for i in range(seg_size*(num_segs-1), self._num_pairs)] )
 
         # inter-segment
-        for seg_index in itertools.combinations(range(num_segs), num_segs_to_choose_from):
-            for inseg_index in itertools.product(range(seg_size), repeat=4):
-                game = [ seg_index[n//num_choices_per_seg]*seg_size + inseg_index[n] for n in range(4) ]
-                if order == 2:
-                    def f(i):
-                        if i % 2 == 0:
-                            return i
-                        else:
-                            return self._num_pairs - i
-                    game = [ f(i)  for i in game ]
+        games = []
+        game = [ i for i in range(4) ]
+        def helper(combs, i, n):
+            if n==4:
+                games.append( game.copy() )
+                return
+            for c in combs[i]:
+                for k in c:
+                    game[n] = k
+                    n += 1
+                helper(combs, i+1, n)
+                n -= num_choices_per_seg
+            return 
 
-                elif order == 1:
-                    game = [ self._num_pairs-1-i for i in game ]
-                
-                gamelist = [ 
-                            [game[0], game[1], game[2], game[3]],
-                            [game[0], game[2], game[1], game[3]],
-                            [game[0], game[3], game[1], game[2]],
-                            ]
-                games += gamelist
 
-        return games
+        inseg_combs = [ list(itertools.combinations(i, num_choices_per_seg)) for i in pairs_in_segments ]
+        for combs in itertools.combinations(inseg_combs, num_segs_to_choose_from):
+            helper(combs, 0, 0)
+
+#            for inseg_index in itertools.product(range(seg_size), repeat=4):
+#                game = [ seg_index[n//num_choices_per_seg]*seg_size + inseg_index[n] for n in range(4) ]
+        shuffled_games = []
+        for game in games:
+            if order == 2:
+                def f(i):
+                    if i % 2 == 0:
+                        return i
+                    else:
+                        return self._num_pairs - i
+                game = [ f(i)  for i in game ]
+
+            elif order == 1:
+                game = [ self._num_pairs-1-i for i in game ]
+            
+            gamelist = [ 
+                        [game[0], game[1], game[2], game[3]],
+                        [game[0], game[2], game[1], game[3]],
+                        [game[0], game[3], game[1], game[2]],
+                        ]
+            shuffled_games += gamelist
+#        print( f"Found {len(games)} games" )
+
+        return shuffled_games
 
 
 
@@ -103,19 +131,24 @@ class KoB:
         
         args_list = [ 
                       [4, 1, 0, 0],
+                      [4, 1, 1, 1],
                       [4, 1, 2, 1],
+                      [2, 2, 0, 1],
+                      [1, 4, 0, 1],
                     ]
 
         for args in args_list:
             if_any_added = True
             while if_any_added:
                 if_added = False
-                games = self.formGamesWithPolicy(args[0], args[1], order=args[2])
+                games = self.formGamesWithPolicy(num_segs=args[0], num_choices_per_seg=args[1], order=args[2])
                 for game in games:
                     if_valid = self.checkValid(game, self._games, count_games=count_games, strict=args[3])
                     if if_valid:
                         if_added = if_added or self.addGame(game, self._games, count_games)
                 if_any_added = if_added
+            if len(self._games)==self._num_games_per_pair*self._num_pairs//4:
+                break
 
         return self._games
             
@@ -319,7 +352,7 @@ class KoB:
                 maxbyes = byes[-1]
         num_rounds = np.ceil( len(games_scheduled)/self._num_courts )
 
-        if True or maxbyes<=2:
+        if False and maxbyes<=2:
             print("num_rounds = ", num_rounds)
             for n in range(self._num_pairs):    
                 byes = self.countByes(n, games_scheduled)
@@ -431,15 +464,15 @@ class KoB:
 
 
 def main():
-    kob = KoB(num_pairs=32, num_courts=5, num_games_per_pair=8, maxbyes_allowed=2, maxrounds_allowed=13)
+    kob = KoB(num_pairs=25, num_courts=5, num_games_per_pair=8, maxbyes_allowed=2, maxrounds_allowed=12)
 
     # match making
-#    kob.makeGames()
-#    kob.checkGames()
-#    kob.saveGameSchedule()
+    kob.makeGames()
+    kob.checkGames()
+    kob.saveGameSchedule()
 
     # schedule making
-    kob.loadGameSchedule("valid_game_schedule.32.json")
+    kob.loadGameSchedule("valid_game_schedule.json")
     kob.makeExcel()
 
 
