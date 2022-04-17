@@ -3,7 +3,7 @@ import vendors
 
 def main():
     v = vendors.Vendors()
-    v.checkPrice("banana")
+    v.checkPrice("cheese")
     
 
 

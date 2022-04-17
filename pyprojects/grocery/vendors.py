@@ -13,6 +13,52 @@ import json
 from bs4 import BeautifulSoup
 import myhelp
 
+class Meijer:
+    _name = "meijer"
+
+    def __init__(self):
+        return
+
+    def search(self, name):
+        url = "https://ac.cnstrc.com/search/" + name + "?c=ciojs-client-2.27.2&key=key_GdYuTcnduTUtsZd6&i=55a023ac-32e9-4e67-bc4e-f49a38fda869&s=1&us=web&page=1&filters%5BavailableInStores%5D=104&sort_by=relevance&sort_order=descending&fmt_options%5Bgroups_max_depth%5D=3&fmt_options%5Bgroups_start%5D=current"
+        
+        payload={}
+        headers = {
+            'authority': 'ac.cnstrc.com',
+            'pragma': 'no-cache',
+            'cache-control': 'no-cache',
+            'sec-ch-ua': '" Not;A Brand";v="99", "Google Chrome";v="97", "Chromium";v="97"',
+            'sec-ch-ua-mobile': '?0',
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36',
+            'sec-ch-ua-platform': '"macOS"',
+            'accept': '*/*',
+            'origin': 'https://www.meijer.com',
+            'sec-fetch-site': 'cross-site',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            'referer': 'https://www.meijer.com/',
+            'accept-language': 'en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7'
+        }
+        
+        try:
+            response = requests.request("GET", url, headers=headers, data=payload)
+        
+            rj = response.json()
+
+            result = rj['response']['results']
+
+            result = [ myhelp.extractDict(item, 
+                    [{'name': ['data', 'summary']}, 
+                     {'currentPrice': ['data', 'discountSalePriceValue']},
+                     {'unitPrice': ['data', 'discountSalePriceValue']} ])
+                     for item in result ]
+        except:
+            result = None
+
+        return result 
+    
+
+
 class Target:
     _name = "target"
 
@@ -38,7 +84,7 @@ class Target:
             'sec-fetch-dest': 'empty',
             'referer': 'https://www.target.com/s?searchTerm=' + name,
             'accept-language': 'en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7',
-            'cookie': 'TealeafAkaSid=Q6POWvahrOdJ1jtxxKgUqX2AWpFsOeLy; visitorId=017F5DCA70A7020185B2202B65A69D6C; sapphire=1; UserLocation=43016|40.060|-83.150|OH|US; fiatsCookie=DSI_666|DSN_Columbus%20NW|DSZ_43017; ci_pixmgr=other; _gcl_au=1.1.1570380276.1646546026; cd_user_id=17f5dca837d970-0704e96f89b4f7-1d326253-1fa400-17f5dca837e7ef; accessToken=eyJraWQiOiJlYXMyIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI2MDZmYTM3Ni1hODFkLTQ4MzUtYjVkYS1kMmRjOGM1ZmMxZmQiLCJpc3MiOiJNSTYiLCJleHAiOjE2NDcyNzYyNDYsImlhdCI6MTY0NzE4OTg0NiwianRpIjoiVEdULmM0MjM0Y2EyM2FmYjQwMTQ5MmExZjZhOGU5NDNmMDZiLWwiLCJza3kiOiJlYXMyIiwic3V0IjoiRyIsImRpZCI6IjdjYWJjMTQyYWNmZGI5NTUyNmYzOGUyNmNmMjMzMzRhYjVmOWI1NTQ1OTZlMDk0NGQ2OTNlMzAxOTAyNmZiZGMiLCJzY28iOiJlY29tLm5vbmUsb3BlbmlkIiwiY2xpIjoiZWNvbS13ZWItMS4wLjAiLCJhc2wiOiJMIn0.Sxv6qxFnlNf3Nus-AS7OCuHpkBqIPQSXqriqN2_bdiVf0bZKmbHMQtZxJpVmmQfq6q7MJqUF0_oSuv15IaLqDDdyHkgsb4lBtT_w7XYInscn8jkAfcRpbUC7OiW1O3AV84Z4xcrN3zJLIwwiTXUgQJAklqFNUH9fiFPuFSBdxmzr0WEVA530LZ8AFQzVrBaBjnu2ribyxl1-hnb-Rgk1CUFAwn73JhKug_vqog04ija8hyqNg7BkyahDIqQTIp2jsZqqpOSjuollBskdnxPndXcrfPrMK0K9hoI9nTWw3mBXnKFd8ibDdG4rGXcfbhVa-uqjYBWN-A7_Qfeea5-kzA; idToken=eyJhbGciOiJub25lIn0.eyJzdWIiOiI2MDZmYTM3Ni1hODFkLTQ4MzUtYjVkYS1kMmRjOGM1ZmMxZmQiLCJpc3MiOiJNSTYiLCJleHAiOjE2NDcyNzYyNDYsImlhdCI6MTY0NzE4OTg0NiwiYXNzIjoiTCIsInN1dCI6IkciLCJjbGkiOiJlY29tLXdlYi0xLjAuMCIsInBybyI6eyJmbiI6bnVsbCwiZW0iOm51bGwsInBoIjpmYWxzZSwibGVkIjpudWxsLCJsdHkiOmZhbHNlfX0.; refreshToken=zzVdJDI26pxe5uvWhPqyVWkVkwpp7nux8Du9FdqorIW2eaPiN7lZlcx5Zwtr26_aFnxtXBLGB1XX7ubYu-oGpA; ffsession={%22sessionHash%22:%22421daa10b1a321646546023853%22%2C%22prevPageName%22:%22search:%20search%20results%22%2C%22prevPageType%22:%22search:%20search%20results%22%2C%22prevPageUrl%22:%22https://www.target.com/s?searchTerm=banana%22%2C%22sessionHit%22:9%2C%22prevSearchTerm%22:%22banana%22}; _uetsid=cea40140a2ec11ecafd9850fcfeff56a; _uetvid=c95aad609d1111ec87bb092837a2609f; _mitata=OTg2MjkyMjIyNDZiNTdhZWY4NzlmODYxYWQ4ZDk4NjA1NmMwODgzMzY0Mjc2MTRmNGYxODBiNTgzYTEzZDVjYw==_/@#/1647238302_/@#/ceKU7ucfNVBHj7G9_/@#/OTQ2MzM1ZWVkZmY0NDljN2UwMmYyNmNhNmFjMjA5ZDE2NjA0NGM3NmNlZmE5OTVmNGFkOThhZTFhZWIzN2Y1Nw==_/@#/000; _mitata=ODVhZmIxOTU0NTZlZTI2MTgxYzJjMGI1MzcxM2E5YTA5NGNmMzVmMjM2MTViZTMwYWUxMDYzYjExOGRjZDMyMQ==_/@#/1647238594_/@#/ceKU7ucfNVBHj7G9_/@#/MmEyZGNmMGEzOWQ2YTgxMjY2NjZjZWI0MjU2ODZkYWYwOTk4Njk1OWFjOTBlY2VmOGQyMmYyMTVjMzQ2ZmYxZQ==_/@#/000'
+            'cookie': ''
         }
         
         try:
@@ -167,7 +213,7 @@ class Walmart:
 
 
 class Vendors:
-    _vendors = [Walmart(), Target()]
+    _vendors = [Walmart(), Target(), Meijer()]
 
     def __init__(self):
         return
@@ -185,7 +231,8 @@ class Vendors:
         for v in self._vendors:
             print( f"from {v._name}:" )
             r = v.search(name)
-            for i in r:
-                print( f"{i['name']}: price $ {i['currentPrice']} , unit price $ {i['unitPrice']}")
+            if r is not None:
+                for i in r[:5]:
+                    print( f"{i['name']}: price $ {i['currentPrice']} , unit price $ {i['unitPrice']}")
 
 
