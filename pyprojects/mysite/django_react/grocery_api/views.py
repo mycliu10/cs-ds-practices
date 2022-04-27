@@ -18,8 +18,11 @@ class GroceryList(APIView):
     def get(self, request, *args, **kwargs):
         data = request.GET
         keyword = data['keyword']
+        maxprice = data['maxprice']
         if keyword is None:
             return Response({'Bad Request: No Keyword Given.'}, status=status.HTTP_400_BAD_REQUEST)
+        if maxprice is None:
+            maxprice = 100.
 
-        search_results = vendors.Vendors().getPrice(keyword)
+        search_results = vendors.Vendors().getPrice(keyword, maxprice)
         return Response(data=search_results)

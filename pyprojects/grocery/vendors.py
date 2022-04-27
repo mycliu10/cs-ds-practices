@@ -219,10 +219,18 @@ class Vendors:
         return
 
 
-    def getPrice(self, name):
+    def getPrice(self, name, maxprice):
         result = {}
         for v in self._vendors:
-            result[v._name] = v.search(name)
+            r = v.search(name)
+            if r is not None:
+                result[v._name] = []
+                for e in r:
+                    if e is not None:
+                        p = e['currentPrice']
+                        if p is not None:
+                            if p < float(maxprice):
+                                result[v._name].append( e )
 
         return result
 

@@ -7,7 +7,7 @@ export default class App extends Component {
         this.state = {
             data: [],
             loaded: false,
-            placeholder: "Loading...",
+            placeholder: "Loading data...",
             search_keyword: "banana"
         };
     }
