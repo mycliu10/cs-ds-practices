@@ -21,24 +21,27 @@ public:
 class TrueOperation : public ChannelOperation {
 private:
     std::vector<std::vector<int>> channel_image_;
-    std::vector<int> counters_;
+    std::vector<std::vector<bool>> counted_;
 public:
     TrueOperation() {
         coefs_ = {{0,.299}, {1,.587}, {2,.114}};
         channel_image_.resize(2);
-        counters_.resize(2);
+        counted_.resize(2);
     }
     int compute(RawImage* ri, int r, int c, int left, int rgb) {
-        if(channel_image_[left].size() > 0 && counters_[left]==ri->getWidth()*ri->getHeight()) {
-            return channel_image_[left][r*ri->getWidth() + c];
+        if(channel_image_[left].size() == 0) {
+            channel_image_[left].resize(ri->getWidth()*ri->getHeight(), 0);
+            counted_[left].resize(ri->getWidth()*ri->getHeight(), false);
         }
 
-        channel_image_[left].resize(ri->getWidth()*ri->getHeight(), 0);
+        if(counted_[left][r*ri->getWidth() + c]) {
+            return channel_image_[left][r*ri->getWidth() + c];
+        }
 
         int ans = ChannelOperation::compute(ri,r,c,left,rgb);
    
         channel_image_[left][r*ri->getWidth() + c] = ans;
-        ++counters_[left];
+        counted_[left][r*ri->getWidth() + c] = true;
 
         return ans;
     }
@@ -124,7 +127,7 @@ private:
     void make() {
         for(int r=0; r<input_image_->getHeight(); ++r) {
             for(int c=0; c<input_image_->getWidth(); ++c) {
-                for(int rgb = 0; rgb < 2; ++rgb) {
+                for(int rgb = 0; rgb < 3; ++rgb) {
                     output_image_.at<cv::Vec3b>(r,c)[2-rgb] = left_image_operation_[rgb]->compute(input_image_, r,c,0, rgb)
                                                             + right_image_operation_[rgb]->compute(input_image_, r,c,1, rgb);
                 }
