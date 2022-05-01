@@ -6,8 +6,13 @@
 #include <vector>
 #include <unordered_set>
 #include <map>
+#include <unordered_map>
+#include <string>
+
+using std::cin;
 using std::cout;
 using std::endl;
+using std::string;
 
 
 class RawImage {
@@ -38,18 +43,5 @@ public:
     int getType() {
         return data_.type();
     }
-
-
-    int calculateLeft(std::vector<double>& coefs, int r, int c) {
-        double ans = 0.;
-        for(int i=0; i<coefs.size(); ++i) {
-            ans += double(data_.at<cv::Vec3b>(r,c)[2-i]) * coefs[i];
-//            cout << double(data_.at<cv::Vec3b>(r,c)[i]) << " " << ans << endl;
-        }
-        return int(ans);
-    }
-
-
-
 };
 
