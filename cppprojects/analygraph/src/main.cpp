@@ -1,12 +1,17 @@
 #include "generation.hpp"
 
 int main() {
-//    std::string path = "../data/p0.jpeg";
-    std::string path = "../data/p1.jpg";
-    size_t last_dot = path.find_last_of(".");
-    std::string filename = path.substr(0, last_dot);
+    string filename;
 
-    RawImage raw_image(path);
+    RawImage raw_image;
+    while(!raw_image.isLoaded()) {
+        cout << "What is the image file name (stereo pair side-by-side) ?" << endl;
+        string path;
+        cin >> path;
+        size_t last_dot = path.find_last_of(".");
+        filename = path.substr(0, last_dot);
+        raw_image.initialize(path);
+    }
     AnalygraphGeneration ag(&raw_image);
 
     std::unordered_map<string,int> choice_table = {

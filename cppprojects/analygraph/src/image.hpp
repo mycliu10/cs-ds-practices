@@ -17,13 +17,18 @@ using std::string;
 
 class RawImage {
 private:
+    bool is_loaded_;
     int cols_;
     int rows_;
     cv::Mat data_;
 public:
-    RawImage(std::string path) {
+    RawImage() {
+        is_loaded_ = false;
+    }
+    void initialize(string path) {
         data_ = cv::imread(path, cv::IMREAD_COLOR);
         if( !data_.empty() ) {
+            is_loaded_ = true;
             cols_ = data_.cols / 2;
             rows_ = data_.rows;
             cout << "Image loaded from " << path << " with width " << cols_ << " and height "
@@ -31,6 +36,9 @@ public:
         }
     }
 
+    bool isLoaded() {
+        return is_loaded_;
+    }
     int getWidth() {
         return cols_;
     }
