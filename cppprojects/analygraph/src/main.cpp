@@ -45,7 +45,7 @@ int main() {
         }
         switch(choice) {
             case(1):
-                ag.makeColor();
+                ag.makeTrue();
                 break;
             case(2):
                 ag.makeGray();
