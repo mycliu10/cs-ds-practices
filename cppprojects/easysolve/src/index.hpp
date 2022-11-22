@@ -5,24 +5,48 @@ class Index {
     VectorN<int> dimensions;
 
 public:
-    Index() {
-        dimension = 0;
-        dimensions.resize({ 3, 4 });
+    class Builder {
+    public:
+        int dimension;
+        VectorN<int> dimensions;
+        static int const maxDimension = 8;
+
+        Builder() : dimension(0), dimensions({ 3, maxDimension}) {}
+
+        Builder & addDimension(int haloBegin, int length, int haloEnd) {
+            dimensions.setElement({0, dimension}, haloBegin);
+            dimensions.setElement({1, dimension}, haloBegin + length);
+            dimensions.setElement({2, dimension}, haloBegin + length + haloEnd);
+            ++dimension;
+            return *this;
+        }
+
+        Index build() {
+            return Index(*this);
+        }
+    };
+
+private:
+    Index(Builder& builder) : dimension(builder.dimension),
+            dimensions({ 3, builder.dimension }) {
+        for (int i = 0; i < dimension; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                dimensions.setElement({ j, i }, builder.dimensions.getElement({ j, i }));
+            }
+        }
     }
 
-    void addDimension(int haloBegin, int len, int haloEnd) {
-        dimensions.element({0, dimension}) = haloBegin;
-        dimensions.element({1, dimension}) = haloBegin + len;
-        dimensions.element({2, dimension}) = haloBegin + len + haloEnd;
-        ++dimension;
-    }
-
-    vector<int> getSizes() {
-        vector<int> sizes;
+public:
+    const vector<int> getSizes() const {
+        vector<int> sizes(dimension);
         for(int i = 0; i < dimension; ++i) {
-            sizes.push_back(dimensions.element({2, i}));
+            sizes[i] = dimensions.getElement({ 2, i });
         }
         return sizes;
+    }
+
+    int const getDimension() const {
+        return dimension;
     }
 
     int getHaloBegin(int dimension) {
@@ -30,15 +54,15 @@ public:
     }
 
     int getBegin(int dimension) {
-        return dimensions.element({ 0, dimension });
+        return dimensions.getElement({ 0, dimension });
     }
 
     int getEnd(int dimension) {
-        return dimensions.element({ 1, dimension });
+        return dimensions.getElement({ 1, dimension });
     }
 
     int getHaloEnd(int dimension) {
-        return dimensions.element({ 2, dimension });
+        return dimensions.getElement({ 2, dimension });
     }
 
     int getNumPoints(int dimension) {
@@ -59,5 +83,9 @@ public:
     
     IntGenerator getHaloEndZone(int dimension) {
         return IntGenerator(getEnd(dimension), getHaloEnd(dimension));
+    }
+
+    IntGenerator getAllZone(int dimension) {
+        return IntGenerator(getHaloBegin(dimension), getHaloEnd(dimension));
     }
 };

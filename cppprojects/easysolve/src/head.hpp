@@ -1,7 +1,9 @@
 #pragma once
 #include <vector>
+#include <initializer_list>
 
 using std::vector;
+using std::initializer_list;
 
 template <class T> 
 class VectorN {
@@ -9,7 +11,15 @@ class VectorN {
     vector<T> data;
 
 public:
+    VectorN<T>() {}
+        
+    VectorN<T>(vector<int> sizes) {
+        this->resize(sizes);
+    }
+
     void resize(vector<int> sizes) {
+        dimensions.clear();
+        data.clear();
         if (sizes.size() < 1) {
         }
         int maxsize = 1;
@@ -22,13 +32,31 @@ public:
         data.resize(maxsize);
     }
 
-    T& element(vector<int> point) {
+    T getElement(vector<int> const & point) const {
         int n = point[0];
         for(int i = 1; i < point.size(); ++i) {
             n *= dimensions[i-1];
             n += point[i];
         }
         return data[n];
+    }
+
+    void setElement(vector<int> const & point, T const value) {
+        int n = point[0];
+        for(int i = 1; i < point.size(); ++i) {
+            n *= dimensions[i-1];
+            n += point[i];
+        }
+        data[n] = value;
+    }
+
+    VectorN<T> & operator=(VectorN<T> & v) {
+        if (this == &v) {
+            return *this;
+        }
+        dimensions = v.dimensions;
+        data = v.data;
+        return *this;
     }
 };
 
@@ -42,25 +70,30 @@ class IntGenerator {
 public:
     IntGenerator(int begin, int end) : begin(begin), end(end) {
         step = 1;
-        current = begin - step;
+        current = begin;
     }
 
     void reset() {
         current = begin;
     }
 
-    bool next() {
-        current += step;
+    bool isValid() {
         if (current >= end) {
             return false;
         }
         return true;
     }
 
-    int getCurrent() {
+    void next() {
+        current += step;
+        
+    }
+
+    int getCurrent() const {
         return current;
     }
-    int getLast() {
+
+    int getLast() const {
         return current - step;
     }
 };
