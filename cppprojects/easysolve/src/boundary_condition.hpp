@@ -2,10 +2,16 @@
 #include "head.hpp"
 
 
+enum BoundaryConditionComputeChange {
+    NO_CHANGE,
+    VALUE_CHANGE,
+    DERIVATIVE_CHANGE
+};
+
 
 class BoundaryCondition {
 public:
-    virtual void compute(double & f, double & df) = 0;
+    virtual BoundaryConditionComputeChange compute(double & f, double & df) = 0;
 
     virtual int suggestHalo() {
         return 0;
@@ -16,8 +22,8 @@ public:
 
 
 class DummyBoundaryCondition : public BoundaryCondition {
-    void compute(double & f, double & df) {
-        return;
+    BoundaryConditionComputeChange compute(double & f, double & df) {
+        return NO_CHANGE;
     }
 };
 
@@ -28,8 +34,9 @@ class DirichletBoundaryCondition : public BoundaryCondition {
 public:
     DirichletBoundaryCondition(double fValue) : fValue(fValue) {}
 
-    void compute(double & f, double & df) {
+    BoundaryConditionComputeChange compute(double & f, double & df) {
         f = fValue;
+        return VALUE_CHANGE;
     }
 };
 
@@ -40,8 +47,9 @@ class NeumannBoundaryCondition : public BoundaryCondition {
 public:
     NeumannBoundaryCondition(double dfValue) : dfValue(dfValue) {}
 
-    void compute(double & f, double & df) {
+    BoundaryConditionComputeChange compute(double & f, double & df) {
         df = dfValue;
+        return DERIVATIVE_CHANGE;
     }
 };
 
@@ -80,6 +88,7 @@ protected:
         boundaryConditions = builder.boundaryConditions;
     }
 
+public:
     BoundaryCondition * getBeginBoundaryCondition(int dimension) {
         return boundaryConditions.getElement({ 0, dimension });
     }

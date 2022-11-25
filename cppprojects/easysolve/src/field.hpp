@@ -21,12 +21,24 @@ public:
         data.reset(0.);
     }
 
+    double & element(vector<int> & point) {
+        return data.element(point);
+    }
+
     double getElement(vector<int> const & point) const {
         return data.getElement(point);
     }
 
     void setElement(vector<int> const & point, double const value) {
         data.setElement(point, value);
+    }
+
+    BoundaryCondition * getBeginBoundaryCondition(int dimension) {
+        return boundaryConditionsSet->getBeginBoundaryCondition(dimension);
+    }
+
+    BoundaryCondition * getEndBoundaryCondition(int dimension) {
+        return boundaryConditionsSet->getEndBoundaryCondition(dimension);
     }
 
     Field & operator=(Field & f) {

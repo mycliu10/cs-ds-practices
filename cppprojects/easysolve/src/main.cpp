@@ -1,7 +1,6 @@
 #include "problem.hpp"
 int main() {
-
-    Problem * problem = new PoissonProblem();
+    PoissonProblem * problem = new PoissonProblem();
 
     BoundaryCondition * westBoundaryCondition = new DirichletBoundaryCondition(1.);
     BoundaryCondition * eastBoundaryCondition = new NeumannBoundaryCondition (0.);
@@ -28,8 +27,7 @@ int main() {
 
     Advancement * advancement = new FirstOrderForwardEuler();
 
-    problem->initialize(mesh, advancement);
+    problem->initialize(mesh, advancement, temperatureBoundaryConditions);
 
-
-
+    problem->solve(0.001);
 }

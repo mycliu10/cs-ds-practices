@@ -58,11 +58,11 @@ public:
     }
 
     int getEnd(int dimension) {
-        return dimensions.getElement({ 1, dimension });
+        return dimensions.getElement({ 1, dimension }) - 1;
     }
 
     int getHaloEnd(int dimension) {
-        return dimensions.getElement({ 2, dimension });
+        return dimensions.getElement({ 2, dimension }) - 1;
     }
 
     int getNumPoints(int dimension) {

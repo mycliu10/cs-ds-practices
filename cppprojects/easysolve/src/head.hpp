@@ -38,6 +38,15 @@ public:
         }
     }
 
+    T & element(vector<int> & point) {
+        int n = point[0];
+        for(int i = 1; i < point.size(); ++i) {
+            n *= dimensions[i-1];
+            n += point[i];
+        }
+        return data[n];
+    }
+
     T getElement(vector<int> const & point) const {
         int n = point[0];
         for(int i = 1; i < point.size(); ++i) {
@@ -99,8 +108,8 @@ public:
         return current;
     }
 
-    int getLast() const {
-        return current - step;
+    int getCount() {
+        return current - begin;
     }
 };
 

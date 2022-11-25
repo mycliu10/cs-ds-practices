@@ -8,7 +8,11 @@ protected:
 public:
     Scheme() {}
 
-    double virtual compute(vector<double> f) = 0;
+    double virtual compute(vector<double> & f) = 0;
+
+    int getStencilSize() {
+        return stencilSize;
+    }
 
     IntGenerator getStencilGenerator() {
         return IntGenerator(offset, offset + stencilSize);
@@ -27,7 +31,8 @@ public:
         stencilSize = 3;
         offset = -1;
     }
-    double compute(vector<double> f) {
+
+    double compute(vector<double> & f) {
         return f[2] - 2.*f[1] + f[0];
     }
 };
