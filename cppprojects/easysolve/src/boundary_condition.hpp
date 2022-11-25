@@ -23,6 +23,8 @@ public:
 
 class DummyBoundaryCondition : public BoundaryCondition {
     BoundaryConditionComputeChange compute(double & f, double & df) {
+        (void) f;
+        (void) df;
         return NO_CHANGE;
     }
 };
@@ -36,6 +38,7 @@ public:
 
     BoundaryConditionComputeChange compute(double & f, double & df) {
         f = fValue;
+        (void) df;
         return VALUE_CHANGE;
     }
 };
@@ -48,6 +51,7 @@ public:
     NeumannBoundaryCondition(double dfValue) : dfValue(dfValue) {}
 
     BoundaryConditionComputeChange compute(double & f, double & df) {
+        (void) f;
         df = dfValue;
         return DERIVATIVE_CHANGE;
     }

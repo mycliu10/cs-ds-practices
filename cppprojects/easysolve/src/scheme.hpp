@@ -17,6 +17,8 @@ public:
     IntGenerator getStencilGenerator() {
         return IntGenerator(offset, offset + stencilSize);
     }
+
+    virtual ~Scheme() {}
 };
 
 

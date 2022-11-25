@@ -8,6 +8,7 @@ protected:
 public:
     virtual double advance(double & f, double & rhs, double dt) = 0;
 
+    virtual ~Advancement() {}
 };
 
 

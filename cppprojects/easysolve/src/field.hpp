@@ -21,6 +21,10 @@ public:
         data.reset(0.);
     }
 
+    double & element(initializer_list<int> point) {
+        return data.element(point);
+    }
+
     double & element(vector<int> & point) {
         return data.element(point);
     }

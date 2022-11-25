@@ -22,13 +22,15 @@ public:
         return index;
     }
 
-    double const getX(vector<int> const & point) const {
+    double getX(vector<int> & point) const {
         return x.getElement(point);
     }
 
-    virtual double const getDxdi(vector<int> const & point) const {
+    virtual double getDxdi(vector<int> & point) const {
         return dxdi.getElement(point);
     }
+
+    virtual ~Mesh() {}
 };
 
 class UniformMesh : public Mesh {
@@ -47,7 +49,8 @@ public:
         }
     }
 
-    double const getDxdi(vector<int> const & point) const {
+    double getDxdi(vector<int> & point) const {
+        (void) point;
         return dx;
     }
 };

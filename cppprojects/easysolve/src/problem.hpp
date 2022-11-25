@@ -13,6 +13,8 @@ public:
     }
 
     virtual void solve(double dt) = 0;
+
+    virtual ~Problem() {}
 };
 
 
@@ -38,7 +40,8 @@ public:
         vector<int> currentPoint(1);
         vector<int> workingPoint(1);
 
-        for(int countIterations = 0; countIterations < 1000; ++countIterations) {
+        for(int countIterations = 0; countIterations < 2; ++countIterations) {
+            cout << temperature.element({0}) << " " << temperature.element({1}) << endl;
             for(iGen.reset(); iGen.isValid(); iGen.next()) {
                 int i = iGen.getCurrent();
                 currentPoint[0] = i;
@@ -63,7 +66,7 @@ public:
                     int n = i + schemeGen.getCurrent();
                     int count = schemeGen.getCount();
                     workingPoint[0] = n;
-                    temperatureStencil[count] = temperature.element(currentPoint);
+                    temperatureStencil[count] = temperature.element(workingPoint);
                 }
                 double ddf = interiorScheme->compute(temperatureStencil);
                 ddf *= - mesh->getDxdi(currentPoint);

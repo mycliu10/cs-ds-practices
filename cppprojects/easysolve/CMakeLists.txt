@@ -20,7 +20,7 @@ if(${_use_omp})
 endif()
 
 ## compiler
-#set(CMAKE_CXX_COMPILER g++)
+set(CMAKE_CXX_COMPILER g++)
 
 ## compiler flags
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11")

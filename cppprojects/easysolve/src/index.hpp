@@ -11,12 +11,12 @@ public:
         VectorN<int> dimensions;
         static int const maxDimension = 8;
 
-        Builder() : dimension(0), dimensions({ 3, maxDimension}) {}
+        Builder() : dimension(0), dimensions({ maxDimension, 3 }) {}
 
         Builder & addDimension(int haloBegin, int length, int haloEnd) {
-            dimensions.setElement({0, dimension}, haloBegin);
-            dimensions.setElement({1, dimension}, haloBegin + length);
-            dimensions.setElement({2, dimension}, haloBegin + length + haloEnd);
+            dimensions.setElement({ dimension, 0 }, haloBegin);
+            dimensions.setElement({ dimension, 1 }, haloBegin + length);
+            dimensions.setElement({ dimension, 2 }, haloBegin + length + haloEnd);
             ++dimension;
             return *this;
         }
@@ -31,25 +31,25 @@ private:
             dimensions({ 3, builder.dimension }) {
         for (int i = 0; i < dimension; ++i) {
             for (int j = 0; j < 3; ++j) {
-                dimensions.setElement({ j, i }, builder.dimensions.getElement({ j, i }));
+                dimensions.setElement({ i, j }, builder.dimensions.getElement({ i, j }));
             }
         }
     }
 
 public:
-    const vector<int> getSizes() const {
+    vector<int> getSizes() const {
         vector<int> sizes(dimension);
         for(int i = 0; i < dimension; ++i) {
-            sizes[i] = dimensions.getElement({ 2, i });
+            sizes[i] = dimensions.getElement({ i, 2 });
         }
         return sizes;
     }
 
-    int const getDimension() const {
+    int getDimension() const {
         return dimension;
     }
 
-    int getHaloBegin(int dimension) {
+    int getHaloBegin() {
         return 0;
     }
 
@@ -74,7 +74,7 @@ public:
     }
 
     IntGenerator getHaloBeginZone(int dimension) {
-        return IntGenerator(getHaloBegin(dimension), getBegin(dimension));
+        return IntGenerator(getHaloBegin(), getBegin(dimension));
     }
 
     IntGenerator getInteriorZone(int dimension) {
@@ -86,6 +86,6 @@ public:
     }
 
     IntGenerator getAllZone(int dimension) {
-        return IntGenerator(getHaloBegin(dimension), getHaloEnd(dimension));
+        return IntGenerator(getHaloBegin(), getHaloEnd(dimension));
     }
 };

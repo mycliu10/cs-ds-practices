@@ -1,9 +1,12 @@
 #pragma once
-#include <vector>
 #include <initializer_list>
+#include <iostream>
+#include <vector>
 
-using std::vector;
+using std::cout;
+using std::endl;
 using std::initializer_list;
+using std::vector;
 
 template <class T> 
 class VectorN {
@@ -38,9 +41,18 @@ public:
         }
     }
 
+    T & element(initializer_list<int> & point) {
+        int n = *point.begin();
+        for(auto i = point.begin() + 1; i != point.end(); ++i) {
+            n *= dimensions[i-point.begin()-1];
+            n += *i;
+        }
+        return data[n];
+    }
+
     T & element(vector<int> & point) {
         int n = point[0];
-        for(int i = 1; i < point.size(); ++i) {
+        for(int i = 1; i < int(point.size()); ++i) {
             n *= dimensions[i-1];
             n += point[i];
         }
@@ -49,7 +61,7 @@ public:
 
     T getElement(vector<int> const & point) const {
         int n = point[0];
-        for(int i = 1; i < point.size(); ++i) {
+        for(int i = 1; i < int(point.size()); ++i) {
             n *= dimensions[i-1];
             n += point[i];
         }
@@ -58,7 +70,7 @@ public:
 
     void setElement(vector<int> const & point, T const value) {
         int n = point[0];
-        for(int i = 1; i < point.size(); ++i) {
+        for(int i = 1; i < int(point.size()); ++i) {
             n *= dimensions[i-1];
             n += point[i];
         }
