@@ -21,8 +21,8 @@ public:
             return *this;
         }
 
-        Index build() {
-            return Index(*this);
+        Index * build() {
+            return new Index(*this);
         }
     };
 

@@ -32,6 +32,12 @@ public:
         data.resize(maxsize);
     }
 
+    void reset(T value) {
+        for(auto & element : data) {
+            element = value;
+        }
+    }
+
     T getElement(vector<int> const & point) const {
         int n = point[0];
         for(int i = 1; i < point.size(); ++i) {
