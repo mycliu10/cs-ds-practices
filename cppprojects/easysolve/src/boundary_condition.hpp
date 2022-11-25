@@ -60,25 +60,25 @@ public:
 
 class BoundaryConditionsSet {
 protected:
-    VectorN<BoundaryCondition *> boundaryConditions;
+    VectorN<shared_ptr<BoundaryCondition>> boundaryConditions;
 
 public:
     class Builder {
     public:
         int dimension;
-        VectorN<BoundaryCondition *> boundaryConditions;
+        VectorN<shared_ptr<BoundaryCondition>> boundaryConditions;
 
         Builder(int dimension) : dimension(dimension) {
-            boundaryConditions.resize({ 2, dimension });
+            boundaryConditions.resize({ dimension, 2 });
         }
 
-        Builder & setBeginBoundaryCondition(BoundaryCondition * bc, int const dimension) {
-            boundaryConditions.setElement({ 0, dimension }, bc);
+        Builder & setBeginBoundaryCondition(shared_ptr<BoundaryCondition> bc, int const dimension) {
+            boundaryConditions.setElement({ dimension, 0 }, bc);
             return *this;
         }
 
-        Builder & setEndBoundaryCondition(BoundaryCondition * bc, int const dimension) {
-            boundaryConditions.setElement({ 1, dimension }, bc);
+        Builder & setEndBoundaryCondition(shared_ptr<BoundaryCondition> bc, int const dimension) {
+            boundaryConditions.setElement({ dimension, 1 }, bc);
             return *this;
         }
 
@@ -93,12 +93,12 @@ protected:
     }
 
 public:
-    BoundaryCondition * getBeginBoundaryCondition(int dimension) {
-        return boundaryConditions.getElement({ 0, dimension });
+    shared_ptr<BoundaryCondition> getBeginBoundaryCondition(int dimension) {
+        return boundaryConditions.getElement({ dimension, 0 });
     }
 
-    BoundaryCondition * getEndBoundaryCondition(int dimension) {
-        return boundaryConditions.getElement({ 1, dimension });
+    shared_ptr<BoundaryCondition> getEndBoundaryCondition(int dimension) {
+        return boundaryConditions.getElement({ dimension, 1 });
     }
 };
 

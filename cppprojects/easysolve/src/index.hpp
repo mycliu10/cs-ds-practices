@@ -28,7 +28,7 @@ public:
 
 private:
     Index(Builder& builder) : dimension(builder.dimension),
-            dimensions({ 3, builder.dimension }) {
+            dimensions({ builder.dimension, 3 }) {
         for (int i = 0; i < dimension; ++i) {
             for (int j = 0; j < 3; ++j) {
                 dimensions.setElement({ i, j }, builder.dimensions.getElement({ i, j }));
@@ -54,15 +54,15 @@ public:
     }
 
     int getBegin(int dimension) {
-        return dimensions.getElement({ 0, dimension });
+        return dimensions.getElement({ dimension, 0 });
     }
 
     int getEnd(int dimension) {
-        return dimensions.getElement({ 1, dimension }) - 1;
+        return dimensions.getElement({ dimension, 1 }) - 1;
     }
 
     int getHaloEnd(int dimension) {
-        return dimensions.getElement({ 2, dimension }) - 1;
+        return dimensions.getElement({ dimension, 2 }) - 1;
     }
 
     int getNumPoints(int dimension) {
@@ -78,11 +78,11 @@ public:
     }
 
     IntGenerator getInteriorZone(int dimension) {
-        return IntGenerator(getBegin(dimension), getEnd(dimension));
+        return IntGenerator(getBegin(dimension), getEnd(dimension) + 1);
     }
     
     IntGenerator getHaloEndZone(int dimension) {
-        return IntGenerator(getEnd(dimension), getHaloEnd(dimension));
+        return IntGenerator(getEnd(dimension), getHaloEnd(dimension) + 1);
     }
 
     IntGenerator getAllZone(int dimension) {

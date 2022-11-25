@@ -1,33 +1,33 @@
 #include "problem.hpp"
 int main() {
-    PoissonProblem * problem = new PoissonProblem();
+    shared_ptr<PoissonProblem> problem(new PoissonProblem());
 
-    BoundaryCondition * westBoundaryCondition = new DirichletBoundaryCondition(1.);
-    BoundaryCondition * eastBoundaryCondition = new NeumannBoundaryCondition (0.);
-    BoundaryCondition * dummyBoundaryCondition = new DummyBoundaryCondition();
+    shared_ptr<BoundaryCondition> westBoundaryCondition(new DirichletBoundaryCondition(1.));
+    shared_ptr<BoundaryCondition> eastBoundaryCondition(new NeumannBoundaryCondition (0.));
+    shared_ptr<BoundaryCondition> dummyBoundaryCondition(new DummyBoundaryCondition());
 
-    BoundaryConditionsSet * meshBoundaryConditions = BoundaryConditionsSet::Builder(1)
+    shared_ptr<BoundaryConditionsSet> meshBoundaryConditions(BoundaryConditionsSet::Builder(1)
             .setBeginBoundaryCondition(dummyBoundaryCondition, 0)
             .setEndBoundaryCondition(dummyBoundaryCondition, 0)
-            .build();
+            .build());
 
-    BoundaryConditionsSet * temperatureBoundaryConditions = BoundaryConditionsSet::Builder(1)
+    shared_ptr<BoundaryConditionsSet> temperatureBoundaryConditions(BoundaryConditionsSet::Builder(1)
             .setBeginBoundaryCondition(westBoundaryCondition, 0)
             .setEndBoundaryCondition(eastBoundaryCondition, 0)
-            .build();
+            .build());
 
-    int numPoints = 16;
+    int numPoints = 4;
     double lx = 1.;
 
-    Index * index = Index::Builder()
-            .addDimension(0, numPoints, 0).
-            build();
+    shared_ptr<Index> index(Index::Builder()
+            .addDimension(0, numPoints, 1).
+            build());
 
-    Mesh * mesh = new UniformMesh(index, meshBoundaryConditions, lx);
+    shared_ptr<Mesh> mesh(new UniformMesh(index, meshBoundaryConditions, lx));
 
-    Advancement * advancement = new FirstOrderForwardEuler();
+    shared_ptr<Advancement> advancement(new FirstOrderForwardEuler());
 
     problem->initialize(mesh, advancement, temperatureBoundaryConditions);
 
-    problem->solve(0.001);
+    problem->solve(0.01);
 }

@@ -3,18 +3,18 @@
 
 class Field {
 protected:
-    Index * index;
-    BoundaryConditionsSet * boundaryConditionsSet;
+    shared_ptr<Index> index;
+    shared_ptr<BoundaryConditionsSet> boundaryConditionsSet;
     VectorN<double> data;
 
 public:
     Field() {}
 
-    Field(Index * index, BoundaryConditionsSet * boundaryConditionsSet) {
+    Field(shared_ptr<Index> index, shared_ptr<BoundaryConditionsSet> boundaryConditionsSet) {
         resize(index, boundaryConditionsSet);
     }
 
-    void resize(Index * index, BoundaryConditionsSet * boundaryConditionsSet) {
+    void resize(shared_ptr<Index> index, shared_ptr<BoundaryConditionsSet> boundaryConditionsSet) {
         this->index = index;
         this->boundaryConditionsSet = boundaryConditionsSet;
         data.resize(index->getSizes());
@@ -37,11 +37,11 @@ public:
         data.setElement(point, value);
     }
 
-    BoundaryCondition * getBeginBoundaryCondition(int dimension) {
+    shared_ptr<BoundaryCondition> getBeginBoundaryCondition(int dimension) {
         return boundaryConditionsSet->getBeginBoundaryCondition(dimension);
     }
 
-    BoundaryCondition * getEndBoundaryCondition(int dimension) {
+    shared_ptr<BoundaryCondition> getEndBoundaryCondition(int dimension) {
         return boundaryConditionsSet->getEndBoundaryCondition(dimension);
     }
 

@@ -1,11 +1,14 @@
 #pragma once
 #include <initializer_list>
 #include <iostream>
+#include <memory>
 #include <vector>
 
 using std::cout;
 using std::endl;
 using std::initializer_list;
+using std::shared_ptr;
+using std::unique_ptr;
 using std::vector;
 
 template <class T> 

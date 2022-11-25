@@ -5,20 +5,20 @@
 
 class Mesh {
 protected:
-    Index * index;
-    BoundaryConditionsSet * boundaryConditionsSet;
+    shared_ptr<Index> index;
+    shared_ptr<BoundaryConditionsSet> boundaryConditionsSet;
     Field x;
     Field dxdi;
 
 public:
-    Mesh(Index * index, BoundaryConditionsSet * boundaryConditionsSet) {
+    Mesh(shared_ptr<Index> index, shared_ptr<BoundaryConditionsSet> boundaryConditionsSet) {
         this->index = index;
         this->boundaryConditionsSet = boundaryConditionsSet;
         x.resize(index, boundaryConditionsSet);
         dxdi.resize(index, NULL);
     }
 
-    Index * getIndex() {
+    shared_ptr<Index> getIndex() {
         return index;
     }
 
@@ -30,27 +30,36 @@ public:
         return dxdi.getElement(point);
     }
 
+    virtual double getD2xdi2(vector<int> & point) const = 0;
+
     virtual ~Mesh() {}
 };
 
 class UniformMesh : public Mesh {
     double lx;
     double dx;
+    double dx2;
 
 public:
-    UniformMesh(Index * index, BoundaryConditionsSet * boundaryConditionsSet, double lx) 
+    UniformMesh(shared_ptr<Index> index, shared_ptr<BoundaryConditionsSet> boundaryConditionsSet, double lx) 
         : Mesh(index, boundaryConditionsSet) {
         this->lx = lx;
-        this->dx = lx / index->getNumCell(0);
+        dx = lx / index->getNumCell(0);
+        dx2 = dx * dx;
         x.resize(index, boundaryConditionsSet);
         for (auto gen = index->getAllZone(0); gen.isValid(); gen.next()) {
             int const i = gen.getCurrent();
-            x.setElement({ i }, dx * (i - index->getBegin(0)));
+            x.element({ i }) = dx * (i - index->getBegin(0));
         }
     }
 
     double getDxdi(vector<int> & point) const {
         (void) point;
         return dx;
+    }
+
+    double getD2xdi2(vector<int> & point) const {
+        (void) point;
+        return dx2;
     }
 };
