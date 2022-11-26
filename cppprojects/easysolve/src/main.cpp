@@ -2,7 +2,7 @@
 
 
 int main() {
-    Timer::start("main");
+    Timer::start("Main");
 
     shared_ptr<PoissonProblem> problem(new PoissonProblem());
 
@@ -20,8 +20,9 @@ int main() {
             .setEndBoundaryCondition(eastBoundaryCondition, 0)
             .build());
 
-    int numPoints = 8;
+    int numPoints = 512;
     double lx = 1.;
+    double dt = (lx / numPoints) * (lx / numPoints) * 0.1;
 
     shared_ptr<Index> index(Index::Builder()
             .addDimension(0, numPoints, 1).
@@ -33,10 +34,10 @@ int main() {
 
     problem->initialize(mesh, advancement, temperatureBoundaryConditions);
 
-    problem->solve(0.01);
+    problem->solve(dt, 10000000);
 
 
-    Timer::stop("main");
+    Timer::stop("Main");
 
     Timer::report();
 }

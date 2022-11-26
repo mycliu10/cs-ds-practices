@@ -2,6 +2,11 @@
 #include "head.hpp"
 
 
+enum BoundaryConditionSide {
+    BEGIN,
+    END
+};
+
 enum BoundaryConditionComputeChange {
     NO_CHANGE,
     VALUE_CHANGE,
@@ -13,8 +18,8 @@ class BoundaryCondition {
 public:
     virtual BoundaryConditionComputeChange compute(double & f, double & df) = 0;
 
-    virtual int suggestHalo() {
-        return 0;
+    virtual BoundaryConditionComputeChange getChange() {
+        return NO_CHANGE;
     }
 
     virtual ~BoundaryCondition() {}
@@ -36,6 +41,10 @@ class DirichletBoundaryCondition : public BoundaryCondition {
 public:
     DirichletBoundaryCondition(double fValue) : fValue(fValue) {}
 
+    BoundaryConditionComputeChange getChange() {
+        return VALUE_CHANGE;
+    }
+
     BoundaryConditionComputeChange compute(double & f, double & df) {
         f = fValue;
         (void) df;
@@ -49,6 +58,10 @@ class NeumannBoundaryCondition : public BoundaryCondition {
 
 public:
     NeumannBoundaryCondition(double dfValue) : dfValue(dfValue) {}
+
+    BoundaryConditionComputeChange getChange() {
+        return DERIVATIVE_CHANGE;
+    }
 
     BoundaryConditionComputeChange compute(double & f, double & df) {
         (void) f;
@@ -93,12 +106,8 @@ protected:
     }
 
 public:
-    shared_ptr<BoundaryCondition> getBeginBoundaryCondition(int dimension) {
-        return boundaryConditions.getElement({ dimension, 0 });
-    }
-
-    shared_ptr<BoundaryCondition> getEndBoundaryCondition(int dimension) {
-        return boundaryConditions.getElement({ dimension, 1 });
+    shared_ptr<BoundaryCondition> getBoundaryCondition(BoundaryConditionSide side, int dimension) {
+        return boundaryConditions.getElement({ dimension, side });
     }
 };
 

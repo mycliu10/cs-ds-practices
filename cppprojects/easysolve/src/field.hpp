@@ -37,12 +37,8 @@ public:
         data.setElement(point, value);
     }
 
-    shared_ptr<BoundaryCondition> getBeginBoundaryCondition(int dimension) {
-        return boundaryConditionsSet->getBeginBoundaryCondition(dimension);
-    }
-
-    shared_ptr<BoundaryCondition> getEndBoundaryCondition(int dimension) {
-        return boundaryConditionsSet->getEndBoundaryCondition(dimension);
+    shared_ptr<BoundaryCondition> getBoundaryCondition(BoundaryConditionSide side, int dimension) {
+        return boundaryConditionsSet->getBoundaryCondition(side, dimension);
     }
 
     Field & operator=(Field & f) {

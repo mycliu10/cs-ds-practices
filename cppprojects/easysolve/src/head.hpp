@@ -157,7 +157,11 @@ public:
 
     static void report() {
         for (auto & duration : durations) {
-            cout << duration.first << ": " << duration.second << " s" << endl;
+            cout << duration.first << ": " << duration.second << " s";
+            if (duration.first != "Main") {
+                cout << " (" << duration.second / durations["Main"] * 100. << " %)";
+            }
+            cout << endl;
         }
     }
 };
