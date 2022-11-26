@@ -3,13 +3,18 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <string>
+#include <unordered_map>
+#include <chrono>
 
 using std::cout;
 using std::endl;
 using std::initializer_list;
 using std::shared_ptr;
+using std::string;
 using std::unique_ptr;
 using std::vector;
+using std::unordered_map;
 
 template <class T> 
 class VectorN {
@@ -128,3 +133,33 @@ public:
     }
 };
 
+
+class Timer {
+    static unordered_map<string, double> starts;
+    static unordered_map<string, double> durations;
+
+    Timer() {}
+
+public:
+    static double getNow() {
+        auto ts = std::chrono::high_resolution_clock::now();
+        auto s = std::chrono::duration_cast<std::chrono::seconds>(ts.time_since_epoch());
+        return s.count();
+    }
+
+    static void start(string name) {
+        starts[name] = getNow();
+    }
+
+    static void stop(string name) {
+        durations[name] += getNow() - starts[name];
+    }
+
+    static void report() {
+        for (auto & duration : durations) {
+            cout << duration.first << ": " << duration.second << " s" << endl;
+        }
+    }
+};
+unordered_map<string, double> Timer::starts;
+unordered_map<string, double> Timer::durations;

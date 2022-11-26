@@ -1,5 +1,9 @@
 #include "problem.hpp"
+
+
 int main() {
+    Timer::start("main");
+
     shared_ptr<PoissonProblem> problem(new PoissonProblem());
 
     shared_ptr<BoundaryCondition> westBoundaryCondition(new DirichletBoundaryCondition(1.));
@@ -16,7 +20,7 @@ int main() {
             .setEndBoundaryCondition(eastBoundaryCondition, 0)
             .build());
 
-    int numPoints = 4;
+    int numPoints = 8;
     double lx = 1.;
 
     shared_ptr<Index> index(Index::Builder()
@@ -30,4 +34,9 @@ int main() {
     problem->initialize(mesh, advancement, temperatureBoundaryConditions);
 
     problem->solve(0.01);
+
+
+    Timer::stop("main");
+
+    Timer::report();
 }
