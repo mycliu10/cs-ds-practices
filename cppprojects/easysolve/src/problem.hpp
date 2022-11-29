@@ -95,15 +95,17 @@ public:
                     continue;
                 }
                 currentPoint[0] = i;
-                Timer::start("StencilVector");
-                for(schemeGen.reset(); schemeGen.isValid(); schemeGen.next()) {
-                    int n = i + schemeGen.getCurrent();
-                    int count = schemeGen.getCount();
-                    workingPoint[0] = n;
-                    temperatureStencil[count] = temperature.element(workingPoint);
-                }
-                Timer::stop("StencilVector");
-                double ddf = interiorScheme->compute(temperatureStencil);
+//                Timer::start("StencilVector");
+//                for(schemeGen.reset(); schemeGen.isValid(); schemeGen.next()) {
+//                    int n = i + schemeGen.getCurrent();
+//                    int count = schemeGen.getCount();
+//                    workingPoint[0] = n;
+//                    temperatureStencil[count] = temperature.element(workingPoint);
+//                }
+//                Timer::stop("StencilVector");
+                workingPoint[0] = i + interiorScheme->getOffset();
+                auto it = temperature.getIterator(workingPoint);
+                double ddf = interiorScheme->compute(it);
                 ddf *= mesh->getD2idx2(currentPoint);
                 rhs.element(currentPoint) = ddf;
             }

@@ -22,12 +22,12 @@ public:
         return index;
     }
 
-    double getX(vector<int> & point) const {
-        return x.getElement(point);
+    double getX(vector<int> & point) {
+        return x.element(point);
     }
 
-    virtual double getDidx(vector<int> & point) const {
-        return didx.getElement(point);
+    virtual double getDidx(vector<int> & point) {
+        return didx.element(point);
     }
 
     virtual double getD2idx2(vector<int> & point) const = 0;
@@ -54,7 +54,7 @@ public:
         dx = 1. / dx;
     }
 
-    double getDidx(vector<int> & point) const {
+    double getDidx(vector<int> & point) {
         (void) point;
         return dx;
     }

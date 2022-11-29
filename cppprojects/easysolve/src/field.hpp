@@ -29,12 +29,8 @@ public:
         return data.element(point);
     }
 
-    double getElement(vector<int> const & point) const {
-        return data.getElement(point);
-    }
-
-    void setElement(vector<int> const & point, double const value) {
-        data.setElement(point, value);
+    vector<double>::iterator getIterator(vector<int> & point) {
+        return data.getIterator(point);
     }
 
     shared_ptr<BoundaryCondition> getBoundaryCondition(BoundaryConditionSide side, int dimension) {

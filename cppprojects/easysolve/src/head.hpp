@@ -67,6 +67,16 @@ public:
         return data[n];
     }
 
+    typename vector<T>::iterator getIterator(vector<int> & point) {
+        int n = point[0];
+        for(int i = 1; i < int(point.size()); ++i) {
+            n *= dimensions[i-1];
+            n += point[i];
+        }
+        auto it = data.begin();
+        return it + n;
+    }
+
     T getElement(vector<int> const & point) const {
         int n = point[0];
         for(int i = 1; i < int(point.size()); ++i) {
