@@ -16,7 +16,7 @@ enum BoundaryConditionComputeChange {
 
 class BoundaryCondition {
 public:
-    virtual BoundaryConditionComputeChange compute(double & f, double & df) = 0;
+    virtual void compute(double & f, double & df) = 0;
 
     virtual BoundaryConditionComputeChange getChange() {
         return NO_CHANGE;
@@ -27,10 +27,9 @@ public:
 
 
 class DummyBoundaryCondition : public BoundaryCondition {
-    BoundaryConditionComputeChange compute(double & f, double & df) {
+    void compute(double & f, double & df) {
         (void) f;
         (void) df;
-        return NO_CHANGE;
     }
 };
 
@@ -45,10 +44,9 @@ public:
         return VALUE_CHANGE;
     }
 
-    BoundaryConditionComputeChange compute(double & f, double & df) {
+    void compute(double & f, double & df) {
         f = fValue;
         (void) df;
-        return VALUE_CHANGE;
     }
 };
 
@@ -63,10 +61,9 @@ public:
         return DERIVATIVE_CHANGE;
     }
 
-    BoundaryConditionComputeChange compute(double & f, double & df) {
+    void compute(double & f, double & df) {
         (void) f;
         df = dfValue;
-        return DERIVATIVE_CHANGE;
     }
 };
 
