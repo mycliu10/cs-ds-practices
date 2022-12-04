@@ -23,7 +23,7 @@ endif()
 set(CMAKE_CXX_COMPILER g++)
 
 ## compiler flags
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++2a")
 if(CMAKE_BUILD_TYPE MATCHES "DEBUG")
     message("DEBUG mode ON!")
     set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g3 -O0 -pedantic -Wall -Wextra -Weffc++")

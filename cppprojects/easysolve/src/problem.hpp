@@ -1,6 +1,7 @@
 #pragma once
 #include "mesh.hpp"
 #include "advancement.hpp"
+#include "residual.hpp"
 
 class Problem {
 protected:
@@ -24,9 +25,7 @@ class PoissonProblem : public Problem {
     unique_ptr<SecondOrderDerivativeScheme> interiorScheme;
     Field temperature;
     Field rhs;
-    double l1Error;
-    double l2Error;
-    double lmaxError;
+    Residual residual;
 
     int solveBoundaryCondition(BoundaryConditionSide side, int dimension) {
         int i;
@@ -83,10 +82,7 @@ class PoissonProblem : public Problem {
             double & u = temperature.element(currentPoint);
             double & du = rhs.element(currentPoint);
             u = advancement->advance(u, du, dt);
-
-            l1Error += std::abs(du);
-            l2Error += du*du;
-            lmaxError = std::max(lmaxError, std::abs(du));
+            residual.compute(du);
         }
     }
 
@@ -107,9 +103,7 @@ public:
         vector<int> workingPoint(1);
 
         for(int countIterations = 1; countIterations <= numIterations; ++countIterations) {
-            l1Error = 0.;
-            l2Error = 0.;
-            lmaxError = 0.;
+            residual.reset();
 
             // Boundary conditions
             Timer::start("BoundaryConditions");
@@ -128,10 +122,11 @@ public:
             Timer::stop("TimeAdvancement");
 
             if (countIterations % 1000 == 0) {
-                cout << "At step = " << countIterations << " L1/L2/Lmax error = " 
-                        << l1Error << "/" << l2Error << "/" << lmaxError << endl;
+                cout << "At step = " << std::setw(9) << countIterations;
+                cout << residual.report().str();
+                cout << endl;
             }
-            if (lmaxError < 1.e-9) {
+            if (residual.getLmaxResidual() < 1.e-6) {
                 break;
             }
         }
