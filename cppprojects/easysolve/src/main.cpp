@@ -20,7 +20,7 @@ int main() {
             .setEndBoundaryCondition(eastBoundaryCondition, 0)
             .build());
 
-    int numPoints = 512;
+    int numPoints = 16;
     double lx = 1.;
     double dt = (lx / numPoints) * (lx / numPoints) * 0.1;
 

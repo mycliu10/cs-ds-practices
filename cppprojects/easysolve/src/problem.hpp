@@ -56,6 +56,40 @@ class PoissonProblem : public Problem {
         return 0;
     }
 
+    void solveI(IntGenerator & iGen) {
+        vector<int> currentPoint(1);
+        vector<int> workingPoint(1);
+
+        // Spatial differential
+        Timer::start("SpatialDifferential");
+        for(iGen.reset(); iGen.isValid(); iGen.next()) {
+            int i = iGen.getCurrent();
+            currentPoint[0] = i;
+            workingPoint[0] = i + interiorScheme->getOffset();
+            auto it = temperature.getIterator(workingPoint);
+            double ddf = interiorScheme->compute(it);
+            ddf *= mesh->getD2idx2(currentPoint);
+            rhs.element(currentPoint) = ddf;
+        }
+        Timer::stop("SpatialDifferential");
+    }
+
+    void advance(IntGenerator & iGen, double dt) {
+        vector<int> currentPoint(1);
+
+        for(iGen.reset(); iGen.isValid(); iGen.next()) {
+            int i = iGen.getCurrent();
+            currentPoint[0] = i;
+            double & u = temperature.element(currentPoint);
+            double & du = rhs.element(currentPoint);
+            u = advancement->advance(u, du, dt);
+
+            l1Error += std::abs(du);
+            l2Error += du*du;
+            lmaxError = std::max(lmaxError, std::abs(du));
+        }
+    }
+
 public:
     void initialize(shared_ptr<Mesh> mesh, shared_ptr<Advancement> advancement,
             shared_ptr<BoundaryConditionsSet> temperatureBoundaryConditions) {
@@ -76,57 +110,21 @@ public:
             l1Error = 0.;
             l2Error = 0.;
             lmaxError = 0.;
-//            for (int i=0; i<8; ++i) {
-//                cout << temperature.element({i}) << " ";
-//            }
-//            cout << endl;
 
             // Boundary conditions
             Timer::start("BoundaryConditions");
             int numSkipPointsBegin = solveBoundaryCondition(BEGIN, 0);
             int numSkipPointsEnd = solveBoundaryCondition(END, 0);
+            iGen.setSkipBegin(numSkipPointsBegin);
+            iGen.setSkipEnd(numSkipPointsEnd);
             Timer::stop("BoundaryConditions");
 
-            // Spatial differential
-            Timer::start("SpatialDifferential");
-            for(iGen.reset(); iGen.isValid(); iGen.next()) {
-                int i = iGen.getCurrent();
-                if (i < index->getBegin(0) + numSkipPointsBegin || i > index->getEnd(0) - numSkipPointsEnd) {
-                    continue;
-                }
-                currentPoint[0] = i;
-//                Timer::start("StencilVector");
-//                for(schemeGen.reset(); schemeGen.isValid(); schemeGen.next()) {
-//                    int n = i + schemeGen.getCurrent();
-//                    int count = schemeGen.getCount();
-//                    workingPoint[0] = n;
-//                    temperatureStencil[count] = temperature.element(workingPoint);
-//                }
-//                Timer::stop("StencilVector");
-                workingPoint[0] = i + interiorScheme->getOffset();
-                auto it = temperature.getIterator(workingPoint);
-                double ddf = interiorScheme->compute(it);
-                ddf *= mesh->getD2idx2(currentPoint);
-                rhs.element(currentPoint) = ddf;
-            }
-            Timer::stop("SpatialDifferential");
+            // Solve I line
+            solveI(iGen);
 
             // Time advancement
             Timer::start("TimeAdvancement");
-            for(iGen.reset(); iGen.isValid(); iGen.next()) {
-                int i = iGen.getCurrent();
-                if (i < index->getBegin(0) + numSkipPointsBegin || i > index->getEnd(0) - numSkipPointsEnd) {
-                    continue;
-                }
-                currentPoint[0] = i;
-                double & u = temperature.element(currentPoint);
-                double & du = rhs.element(currentPoint);
-                u = advancement->advance(u, du, dt);
-
-                l1Error += std::abs(du);
-                l2Error += du*du;
-                lmaxError = std::max(lmaxError, std::abs(du));
-            }
+            advance(iGen, dt);
             Timer::stop("TimeAdvancement");
 
             if (countIterations % 1000 == 0) {

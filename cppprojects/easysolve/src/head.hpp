@@ -111,27 +111,41 @@ class IntGenerator {
     int end;
     int step;
     int current;
+    int skipBegin;
+    int skipEnd;
+    bool inUse;
+    static std::unordered_map<string, IntGenerator> store;
 
 public:
     IntGenerator(int begin, int end) : begin(begin), end(end) {
         step = 1;
         current = begin;
+        skipBegin = 0;
+        skipEnd = 0;
     }
 
     void reset() {
-        current = begin;
+        current = begin + skipBegin;
     }
 
     bool isValid() {
-        if (current >= end) {
+        if (current >= end - skipEnd) {
             return false;
         }
         return true;
     }
 
+    // step from begin to end - 1
     void next() {
         current += step;
-        
+    }
+
+    void setSkipBegin(int skipBegin) {
+        this->skipBegin = skipBegin;
+    }
+
+    void setSkipEnd(int skipEnd) {
+        this->skipEnd = skipEnd;
     }
 
     int getCurrent() const {
