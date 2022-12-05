@@ -1,4 +1,4 @@
-#pragma
+#pragma once
 #include "head.hpp"
 
 class Residual {

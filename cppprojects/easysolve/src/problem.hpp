@@ -97,10 +97,8 @@ public:
 
     void solve(double dt, int numIterations) {
         IntGenerator iGen = index->getInteriorZone(0);
-        IntGenerator schemeGen = interiorScheme->getStencilGenerator();
         vector<double> temperatureStencil(interiorScheme->getStencilSize());
         vector<int> currentPoint(1);
-        vector<int> workingPoint(1);
 
         for(int countIterations = 1; countIterations <= numIterations; ++countIterations) {
             residual.reset();

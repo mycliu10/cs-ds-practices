@@ -115,8 +115,6 @@ class IntGenerator {
     int current;
     int skipBegin;
     int skipEnd;
-    bool inUse;
-    static std::unordered_map<string, IntGenerator> store;
 
 public:
     IntGenerator(int begin, int end) : begin(begin), end(end) {
